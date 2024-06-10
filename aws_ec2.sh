@@ -7,4 +7,10 @@
 
 set -x
 
-aws ec2 describe-instances | jq '.Reservations[].Instances[] | {InstanceId: .InstanceId, InstanceType: .InstanceType, KeyName: .KeyName, PublicDnsName: .PublicDnsName}'
+instanceids=$(aws ec2 describe-instances | jq -r '.Reservations[].Instances[].InstanceId')
+
+for InstanceId in $instanceids; do
+
+aws ec2 describe-instances --instance-ids "$InstanceId" | jq '.Reservations[].Instances[] | {InstanceId: .InstanceId, InstanceType: .InstanceType, KeyName: .KeyName, PublicDnsName: .PublicDnsName}'
+
+done
